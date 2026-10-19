@@ -9,7 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const ytDlpPath = path.join(__dirname, 'yt-dlp.exe');
+// Detect whether running on Windows (.exe) or Linux (Render)
+const ytDlpPath = process.platform === 'win32'
+    ? path.join(__dirname, 'yt-dlp.exe')
+    : path.join(__dirname, 'yt-dlp');
 
 // In-Memory Caches for near-zero latency on repeated requests
 const searchCache = new Map<string, any>();
@@ -84,7 +87,7 @@ app.get('/api/stream/:videoId', (req, res) => {
     });
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Geet backend running on http://0.0.0.0:${PORT}`);
+    console.log(`Geet backend running on port ${PORT}`);
 });
